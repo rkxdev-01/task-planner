@@ -28,11 +28,30 @@ app.use(
 );
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Task Planner API is running.',
+    endpoints: {
+      health: '/api/health',
+      tasks: '/api/tasks',
+    },
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Task Planner backend is running.' });
 });
 
 app.use('/api/tasks', taskRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: `Route ${req.originalUrl} not found.`,
+  });
+});
+
 app.use(errorMiddleware);
 
 const startServer = async () => {
